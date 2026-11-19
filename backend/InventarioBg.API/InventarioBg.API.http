@@ -1,6 +1,31 @@
 @InventarioBg.API_HostAddress = http://localhost:5086
 
-GET {{InventarioBg.API_HostAddress}}/weatherforecast/
+@accessToken = REEMPLAZAR_CON_TOKEN
+
+POST {{InventarioBg.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@ejemplo.com",
+  "password": "REEMPLAZAR"
+}
+
+###
+
+GET {{InventarioBg.API_HostAddress}}/api/productos?page=1&pageSize=20
 Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+GET {{InventarioBg.API_HostAddress}}/api/proveedores
+Accept: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+
+GET {{InventarioBg.API_HostAddress}}/api/productos/00000000-0000-0000-0000-000000000001/inventarios
+Accept: application/json
+Authorization: Bearer {{accessToken}}
 
 ###

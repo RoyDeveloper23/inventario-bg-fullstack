@@ -1,11 +1,14 @@
 using InventarioBg.Infrastructure.Configuration;
 using InventarioBg.Application.Abstractions.Persistence;
+using InventarioBg.Application.Abstractions.Security;
 using InventarioBg.Infrastructure.Data;
 using InventarioBg.Infrastructure.Repositories;
+using InventarioBg.Infrastructure.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using System.Text;
 
 namespace InventarioBg.Infrastructure;
 
@@ -27,10 +30,19 @@ public static class DependencyInjection
         services.AddScoped<IProductoRepository, ProductoRepository>();
         services.AddScoped<IProveedorRepository, ProveedorRepository>();
         services.AddScoped<IProductoInventarioRepository, ProductoInventarioRepository>();
+        services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
+        services.AddSingleton<IJwtTokenService, JwtTokenService>();
 
         services
             .AddOptions<JwtSettings>()
-            .Bind(configuration.GetSection(JwtSettings.SectionName));
+            .Bind(configuration.GetSection(JwtSettings.SectionName))
+            .Validate(x =>
+                Encoding.UTF8.GetByteCount(x.ClaveSecreta) >= 32 &&
+                !string.IsNullOrWhiteSpace(x.Emisor) &&
+                !string.IsNullOrWhiteSpace(x.Audiencia) &&
+                x.MinutosExpiracion is > 0 and <= 1440,
+                "La configuración JWT debe tener una clave de al menos 32 bytes, emisor, audiencia y expiración válida.")
+            .ValidateOnStart();
 
         return services;
     }
