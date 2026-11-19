@@ -35,7 +35,7 @@ Never cut: validation at trust boundaries, error handling that prevents data los
 
 ## 1. Estructura del Monorepo
 
-- `backend/InventarioBg/`: Solución .NET 8 Web API con arquitectura en capas (`InventarioBg.Domain`, `InventarioBg.Application`, `InventarioBg.Infrastructure`, `InventarioBg.API`).
+- `backend/InventarioBg`: Solución .NET 8 Web API con arquitectura en capas (`InventarioBg.Domain`, `InventarioBg.Application`, `InventarioBg.Infrastructure`, `InventarioBg.API`).
 - `frontend/`: Aplicación SPA en Angular 19 (`--ssr=false`) con TypeScript en modo estricto y Tailwind CSS.
 
 ## 2. Reglas de Estilo y Código (Estricto)
