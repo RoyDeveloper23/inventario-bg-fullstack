@@ -1,0 +1,12 @@
+@if (notificaciones.notificacion(); as notificacion) {
+  <div
+    class="toast"
+    [class.toast-error]="notificacion.tipo === 'error'"
+    [class.toast-success]="notificacion.tipo === 'success'"
+    role="alert"
+    aria-live="polite"
+  >
+    <span>{{ notificacion.mensaje }}</span>
+    <button type="button" (click)="notificaciones.cerrar()" aria-label="Cerrar mensaje">Cerrar</button>
+  </div>
+}

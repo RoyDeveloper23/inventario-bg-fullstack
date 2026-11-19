@@ -1,0 +1,23 @@
+<section class="login">
+  <form [formGroup]="formulario" (ngSubmit)="iniciarSesion()" novalidate>
+    <h1>Iniciar sesion</h1>
+
+    <label for="email">Correo electronico</label>
+    <input id="email" type="email" formControlName="email" autocomplete="email" />
+    @if (formulario.controls.email.touched && formulario.controls.email.hasError('required')) {
+      <p class="error">El correo es obligatorio.</p>
+    } @else if (formulario.controls.email.touched && formulario.controls.email.hasError('email')) {
+      <p class="error">Ingrese un correo valido.</p>
+    }
+
+    <label for="password">Contrasena</label>
+    <input id="password" type="password" formControlName="password" autocomplete="current-password" />
+    @if (formulario.controls.password.touched && formulario.controls.password.hasError('required')) {
+      <p class="error">La contrasena es obligatoria.</p>
+    }
+
+    <button type="submit" [disabled]="enviando">
+      {{ enviando ? 'Ingresando...' : 'Ingresar' }}
+    </button>
+  </form>
+</section>
