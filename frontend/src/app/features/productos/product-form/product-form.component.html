@@ -1,0 +1,44 @@
+<section class="formulario-producto">
+  <div class="encabezado">
+    <h1>{{ id ? 'Editar producto' : 'Nuevo producto' }}</h1>
+    <a routerLink="/productos">Volver al listado</a>
+  </div>
+
+  @if (cargando) {
+    <p role="status">Cargando producto...</p>
+  } @else {
+    <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+      <label for="codigoSku">SKU</label>
+      <input id="codigoSku" type="text" formControlName="codigoSku" />
+      @if (formulario.controls.codigoSku.touched && formulario.controls.codigoSku.hasError('required')) {
+        <p class="error">El SKU es obligatorio.</p>
+      } @else if (formulario.controls.codigoSku.touched && formulario.controls.codigoSku.hasError('maxlength')) {
+        <p class="error">El SKU no puede superar 100 caracteres.</p>
+      }
+
+      <label for="nombre">Nombre</label>
+      <input id="nombre" type="text" formControlName="nombre" />
+      @if (formulario.controls.nombre.touched && formulario.controls.nombre.hasError('required')) {
+        <p class="error">El nombre es obligatorio.</p>
+      } @else if (formulario.controls.nombre.touched && formulario.controls.nombre.hasError('maxlength')) {
+        <p class="error">El nombre no puede superar 200 caracteres.</p>
+      }
+
+      <label for="descripcion">Descripcion</label>
+      <textarea id="descripcion" rows="4" formControlName="descripcion"></textarea>
+      @if (formulario.controls.descripcion.touched && formulario.controls.descripcion.hasError('maxlength')) {
+        <p class="error">La descripcion no puede superar 1000 caracteres.</p>
+      }
+
+      <label for="categoria">Categoria</label>
+      <input id="categoria" type="text" formControlName="categoria" />
+      @if (formulario.controls.categoria.touched && formulario.controls.categoria.hasError('maxlength')) {
+        <p class="error">La categoria no puede superar 100 caracteres.</p>
+      }
+
+      <button type="submit" [disabled]="enviando">
+        {{ enviando ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </form>
+  }
+</section>

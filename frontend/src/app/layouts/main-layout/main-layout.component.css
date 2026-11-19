@@ -20,6 +20,10 @@ nav {
   gap: 1rem;
 }
 
+nav a {
+  color: white;
+}
+
 button {
   border: 1px solid #94a3b8;
   border-radius: 0.375rem;

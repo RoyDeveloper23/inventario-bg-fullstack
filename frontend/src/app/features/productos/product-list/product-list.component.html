@@ -1,0 +1,75 @@
+<section class="catalogo">
+  <div class="encabezado">
+    <h1>Productos</h1>
+    <a class="boton primario" routerLink="/productos/nuevo">Nuevo producto</a>
+  </div>
+
+  <form class="filtros" [formGroup]="filtros" (ngSubmit)="buscar()" novalidate>
+    <label>
+      Buscar
+      <input type="search" formControlName="busqueda" placeholder="Nombre o SKU" />
+    </label>
+    <label>
+      Proveedor
+      <select formControlName="proveedorId">
+        <option value="">Todos</option>
+        @for (proveedor of proveedores; track proveedor.id) {
+          <option [value]="proveedor.id">{{ proveedor.nombre }}</option>
+        }
+      </select>
+    </label>
+    <button type="submit" [disabled]="cargando">Buscar</button>
+  </form>
+
+  @if (cargando) {
+    <p role="status">Cargando productos...</p>
+  } @else if (error) {
+    <div class="estado" role="alert">
+      <p>No se pudieron cargar los productos.</p>
+      <button type="button" (click)="cargar()">Reintentar</button>
+    </div>
+  } @else if (productos.length === 0) {
+    <div class="estado">
+      <p>No hay productos que coincidan con los filtros.</p>
+    </div>
+  } @else {
+    <div class="tabla">
+      <table>
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Nombre</th>
+            <th>Categoria</th>
+            <th>Stock</th>
+            <th>Estado</th>
+            <th><span class="sr-only">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (producto of productos; track producto.id) {
+            <tr>
+              <td>{{ producto.codigoSku }}</td>
+              <td>{{ producto.nombre }}</td>
+              <td>{{ producto.categoria || '-' }}</td>
+              <td>{{ producto.stockTotal }}</td>
+              <td>{{ producto.activo ? 'Activo' : 'Inactivo' }}</td>
+              <td class="acciones">
+                <a [routerLink]="['/productos', producto.id, 'editar']">Editar</a>
+                <a [routerLink]="['/productos', producto.id, 'inventario']">Ver stock</a>
+                @if (producto.activo) {
+                  <button type="button" (click)="desactivar(producto)">Desactivar</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <nav class="paginacion" aria-label="Paginacion de productos">
+      <button type="button" (click)="cambiarPagina(pagina - 1)" [disabled]="pagina === 1">Anterior</button>
+      <span>Pagina {{ pagina }} de {{ totalPaginas }}</span>
+      <button type="button" (click)="cambiarPagina(pagina + 1)" [disabled]="pagina >= totalPaginas">Siguiente</button>
+    </nav>
+  }
+</section>

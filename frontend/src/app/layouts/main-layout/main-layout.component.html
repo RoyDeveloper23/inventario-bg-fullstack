@@ -1,6 +1,7 @@
 <header class="header">
   <a routerLink="/" class="brand">Inventario BG</a>
   <nav aria-label="Navegacion principal">
+    <a routerLink="/productos">Productos</a>
     <span>{{ auth.usuario()?.nombre }}</span>
     <button type="button" (click)="logout()">Cerrar sesion</button>
   </nav>

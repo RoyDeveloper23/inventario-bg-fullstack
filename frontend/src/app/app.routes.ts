@@ -13,7 +13,28 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./layouts/main-layout/main-layout.component')
       .then(({ MainLayoutComponent }) => MainLayoutComponent),
-    children: []
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'productos'
+      },
+      {
+        path: 'productos',
+        loadComponent: () => import('./features/productos/product-list/product-list.component')
+          .then(({ ProductListComponent }) => ProductListComponent)
+      },
+      {
+        path: 'productos/nuevo',
+        loadComponent: () => import('./features/productos/product-form/product-form.component')
+          .then(({ ProductFormComponent }) => ProductFormComponent)
+      },
+      {
+        path: 'productos/:id/editar',
+        loadComponent: () => import('./features/productos/product-form/product-form.component')
+          .then(({ ProductFormComponent }) => ProductFormComponent)
+      }
+    ]
   },
   { path: '**', redirectTo: '' }
 ];

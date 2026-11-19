@@ -283,11 +283,11 @@ Cada tarea es un cambio acotado. Los paths son relativos a la raíz del reposito
 
 ### Fase 5 — Catálogo y CRUD de productos
 
-- [ ] Implementar cliente HTTP tipado para listar, obtener, crear, actualizar y desactivar productos con filtros/paginación. Archivos: `frontend/src/app/features/productos/services/producto.service.ts` (crear).
-- [ ] Construir listado responsive con búsqueda, filtro de proveedor, paginación, carga/vacío/error y acceso al detalle del stock. Archivos: `frontend/src/app/features/productos/product-list/product-list.component.ts` (crear), `frontend/src/app/features/productos/product-list/product-list.component.html` (crear), `frontend/src/app/features/productos/product-list/product-list.component.css` (crear).
-- [ ] Construir formulario reactivo reutilizable para crear/editar producto con validaciones alineadas a los DTOs. Archivos: `frontend/src/app/features/productos/product-form/product-form.component.ts` (crear), `frontend/src/app/features/productos/product-form/product-form.component.html` (crear), `frontend/src/app/features/productos/product-form/product-form.component.css` (crear).
-- [ ] Añadir rutas de catálogo protegidas y navegación entre listado/formulario/detalle sin romper navegación directa por URL. Archivos: `frontend/src/app/app.routes.ts` (modificar).
-- [ ] Sustituir pruebas de scaffold que asumen pantalla Angular inicial y añadir pruebas de servicio/formulario para flujos CRUD y errores de validación. Archivos: `frontend/src/app/app.component.spec.ts` (modificar), `frontend/src/app/features/productos/product-form/product-form.component.spec.ts` (crear), `frontend/src/app/features/productos/services/producto.service.spec.ts` (crear).
+- [x] Implementar cliente HTTP tipado para listar, obtener, crear, actualizar y desactivar productos con filtros/paginación. Archivos: `frontend/src/app/features/productos/services/producto.service.ts` (crear).
+- [x] Construir listado responsive con búsqueda, filtro de proveedor, paginación, carga/vacío/error y acceso al detalle del stock. Archivos: `frontend/src/app/features/productos/product-list/product-list.component.ts` (crear), `frontend/src/app/features/productos/product-list/product-list.component.html` (crear), `frontend/src/app/features/productos/product-list/product-list.component.css` (crear).
+- [x] Construir formulario reactivo reutilizable para crear/editar producto con validaciones alineadas a los DTOs. Archivos: `frontend/src/app/features/productos/product-form/product-form.component.ts` (crear), `frontend/src/app/features/productos/product-form/product-form.component.html` (crear), `frontend/src/app/features/productos/product-form/product-form.component.css` (crear).
+- [x] Añadir rutas de catálogo protegidas y navegación entre listado/formulario/detalle sin romper navegación directa por URL. Archivos: `frontend/src/app/app.routes.ts` (modificar).
+- [x] Sustituir pruebas de scaffold que asumen pantalla Angular inicial y añadir pruebas de servicio/formulario para flujos CRUD y errores de validación. Archivos: `frontend/src/app/app.component.spec.ts` (modificar), `frontend/src/app/features/productos/product-form/product-form.component.spec.ts` (crear), `frontend/src/app/features/productos/services/producto.service.spec.ts` (crear).
 
 ### Fase 6 — Proveedores y existencias por lote
 

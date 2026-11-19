@@ -1,0 +1,123 @@
+.catalogo {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.encabezado,
+.filtros,
+.paginacion,
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.encabezado {
+  justify-content: space-between;
+}
+
+h1 {
+  margin: 0;
+}
+
+.filtros {
+  flex-wrap: wrap;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: white;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+input,
+select {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #94a3b8;
+  border-radius: 0.375rem;
+  background: white;
+}
+
+.tabla {
+  overflow-x: auto;
+  background: white;
+  border-radius: 0.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.acciones {
+  justify-content: flex-end;
+  min-width: 14rem;
+}
+
+a,
+button,
+.boton {
+  border: 0;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  background: #e2e8f0;
+  color: #0f172a;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primario {
+  background: #1d4ed8;
+  color: white;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.estado,
+.paginacion {
+  justify-content: center;
+  border-radius: 0.5rem;
+  background: white;
+  padding: 1.25rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+@media (max-width: 640px) {
+  .encabezado,
+  .filtros {
+    align-items: stretch;
+  }
+
+  .encabezado {
+    align-items: flex-start;
+  }
+
+  .filtros {
+    flex-direction: column;
+  }
+
+  .paginacion {
+    flex-wrap: wrap;
+  }
+}
