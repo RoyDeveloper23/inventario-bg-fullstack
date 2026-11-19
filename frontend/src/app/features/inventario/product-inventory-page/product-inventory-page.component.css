@@ -1,0 +1,51 @@
+.inventario {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h1,
+p {
+  margin: 0.5rem 0;
+}
+
+.tabla {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  background: white;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+a,
+button {
+  display: inline-block;
+  border: 0;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  background: #e2e8f0;
+  color: #0f172a;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.estado {
+  border-radius: 0.5rem;
+  background: white;
+  padding: 1.25rem;
+}

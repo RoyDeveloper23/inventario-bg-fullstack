@@ -1,0 +1,65 @@
+<section class="inventario">
+  <div class="encabezado">
+    <div>
+      <a routerLink="/productos">Volver a productos</a>
+      <h1>{{ producto?.nombre ?? 'Inventario del producto' }}</h1>
+      @if (producto) {
+        <p>SKU: {{ producto.codigoSku }}</p>
+      }
+    </div>
+    <button type="button" (click)="nuevoLote()" [disabled]="!producto || cargando">
+      Agregar lote
+    </button>
+  </div>
+
+  @if (mostrarFormulario) {
+    <app-inventory-form
+      [productoId]="productoId"
+      [inventario]="inventarioEnEdicion"
+      (completado)="alCompletarFormulario()"
+      (cancelado)="cerrarFormulario()"
+    />
+  }
+
+  @if (cargando) {
+    <p role="status">Cargando inventario...</p>
+  } @else if (error) {
+    <div class="estado" role="alert">
+      <p>No se pudo cargar el inventario del producto.</p>
+      <button type="button" (click)="cargar()">Reintentar</button>
+    </div>
+  } @else if (inventarios.length === 0) {
+    <div class="estado">
+      <p>Este producto todavía no tiene lotes registrados.</p>
+    </div>
+  } @else {
+    <div class="tabla">
+      <table>
+        <thead>
+          <tr>
+            <th>Lote</th>
+            <th>Proveedor</th>
+            <th>Precio unitario</th>
+            <th>Cantidad disponible</th>
+            <th>Fecha de ingreso</th>
+            <th><span class="sr-only">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (inventario of inventarios; track inventario.id) {
+            <tr>
+              <td>{{ inventario.numeroLote }}</td>
+              <td>{{ inventario.proveedorNombre }}</td>
+              <td>{{ inventario.precioUnitario | number:'1.2-2' }}</td>
+              <td>{{ inventario.stockDisponible }}</td>
+              <td>{{ inventario.fechaIngreso | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <button type="button" (click)="editar(inventario)">Editar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

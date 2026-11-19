@@ -2,9 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 
 import { environment } from '../../../../environments/environment';
-import { ItemsResult } from '../../../core/models/items-result.models';
 import { PagedResult } from '../../../core/models/paged-result.models';
-import { Proveedor } from '../../../core/models/proveedor.models';
 import {
   Producto,
   ProductoListItem,
@@ -45,9 +43,5 @@ export class ProductoService {
 
   desactivar(id: string) {
     return this.http.delete<void>(`${this.url}/${id}`);
-  }
-
-  listarProveedores() {
-    return this.http.get<ItemsResult<Proveedor>>(`${environment.apiUrl}/proveedores`);
   }
 }

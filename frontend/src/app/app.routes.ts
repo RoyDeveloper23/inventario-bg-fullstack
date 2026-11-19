@@ -33,6 +33,11 @@ export const routes: Routes = [
         path: 'productos/:id/editar',
         loadComponent: () => import('./features/productos/product-form/product-form.component')
           .then(({ ProductFormComponent }) => ProductFormComponent)
+      },
+      {
+        path: 'productos/:id/inventario',
+        loadComponent: () => import('./features/inventario/product-inventory-page/product-inventory-page.component')
+          .then(({ ProductInventoryPageComponent }) => ProductInventoryPageComponent)
       }
     ]
   },

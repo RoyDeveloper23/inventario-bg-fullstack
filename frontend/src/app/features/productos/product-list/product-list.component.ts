@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { Proveedor } from '../../../core/models/proveedor.models';
+import { ProveedorService } from '../../../core/services/proveedor.service';
 import { ProductoListItem } from '../models/producto.models';
 import { ProductoService } from '../services/producto.service';
 
@@ -15,6 +16,7 @@ import { ProductoService } from '../services/producto.service';
 })
 export class ProductListComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly proveedorService = inject(ProveedorService);
   private readonly productoService = inject(ProductoService);
 
   readonly filtros = this.fb.nonNullable.group({
@@ -63,7 +65,7 @@ export class ProductListComponent implements OnInit {
   }
 
   private cargarProveedores(): void {
-    this.productoService.listarProveedores().subscribe({
+    this.proveedorService.listar().subscribe({
       next: (resultado) => this.proveedores = resultado.items
     });
   }

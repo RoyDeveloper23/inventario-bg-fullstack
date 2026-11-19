@@ -1,0 +1,64 @@
+<form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+  <h2>{{ inventario ? 'Editar lote' : 'Agregar lote' }}</h2>
+
+  @if (inventario) {
+    <p><strong>Proveedor:</strong> {{ inventario.proveedorNombre }}</p>
+    <p><strong>Número de lote:</strong> {{ inventario.numeroLote }}</p>
+  } @else {
+    @if (cargandoProveedores) {
+      <p role="status">Cargando proveedores...</p>
+    } @else if (errorProveedores) {
+      <div role="alert">
+        <p>No se pudieron cargar los proveedores.</p>
+        <button type="button" (click)="cargarProveedores()">Reintentar</button>
+      </div>
+    } @else if (proveedores.length === 0) {
+      <p role="status">No hay proveedores disponibles.</p>
+    }
+
+    <label for="proveedorId">Proveedor</label>
+    <select id="proveedorId" formControlName="proveedorId">
+      <option value="">Selecciona un proveedor</option>
+      @for (proveedor of proveedores; track proveedor.id) {
+        <option [value]="proveedor.id">{{ proveedor.nombre }}</option>
+      }
+    </select>
+    @if (formulario.controls.proveedorId.touched && formulario.controls.proveedorId.hasError('required')) {
+      <p class="error">Selecciona un proveedor.</p>
+    }
+
+    <label for="numeroLote">Número de lote</label>
+    <input id="numeroLote" type="text" formControlName="numeroLote" maxlength="100" />
+    @if (formulario.controls.numeroLote.touched && formulario.controls.numeroLote.hasError('required')) {
+      <p class="error">El número de lote es obligatorio.</p>
+    } @else if (formulario.controls.numeroLote.touched && formulario.controls.numeroLote.hasError('maxlength')) {
+      <p class="error">El número de lote no puede superar 100 caracteres.</p>
+    }
+  }
+
+  <label for="precioUnitario">Precio unitario</label>
+  <input id="precioUnitario" type="number" min="0" step="0.01" formControlName="precioUnitario" />
+  @if (formulario.controls.precioUnitario.touched && formulario.controls.precioUnitario.hasError('min')) {
+    <p class="error">El precio no puede ser negativo.</p>
+  }
+
+  <label for="stockDisponible">Cantidad disponible</label>
+  <input id="stockDisponible" type="number" min="0" step="1" formControlName="stockDisponible" />
+  @if (formulario.controls.stockDisponible.touched && formulario.controls.stockDisponible.hasError('min')) {
+    <p class="error">La cantidad no puede ser negativa.</p>
+  } @else if (formulario.controls.stockDisponible.touched && formulario.controls.stockDisponible.hasError('pattern')) {
+    <p class="error">La cantidad debe ser un número entero.</p>
+  }
+
+  <div class="acciones">
+    <button type="submit" [disabled]="enviando || eliminando || cargandoProveedores || errorProveedores">
+      {{ enviando ? 'Guardando...' : 'Guardar lote' }}
+    </button>
+    <button type="button" (click)="cancelado.emit()" [disabled]="enviando || eliminando">Cancelar</button>
+    @if (inventario?.stockDisponible === 0) {
+      <button type="button" class="peligro" (click)="eliminar()" [disabled]="enviando || eliminando">
+        {{ eliminando ? 'Eliminando...' : 'Eliminar lote' }}
+      </button>
+    }
+  </div>
+</form>
