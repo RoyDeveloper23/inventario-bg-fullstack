@@ -9,6 +9,7 @@ export interface Producto {
 
 export interface ProductoListItem extends Producto {
   stockTotal: number;
+  proveedores: string[];
 }
 
 export interface ProductoRequest {

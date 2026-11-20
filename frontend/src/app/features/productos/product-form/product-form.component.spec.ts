@@ -45,7 +45,7 @@ describe('ProductFormComponent', () => {
     const fixture = TestBed.createComponent(ProductFormComponent);
     fixture.detectChanges();
     fixture.componentInstance.formulario.setValue({
-      codigoSku: 'SKU-1',
+      codigoSku: ' sku-1 ',
       nombre: 'Producto',
       descripcion: '',
       categoria: ''
@@ -65,5 +65,27 @@ describe('ProductFormComponent', () => {
       id: '1', codigoSku: 'SKU-1', nombre: 'Producto', descripcion: null, categoria: null, activo: true
     });
     expect(router.navigate).toHaveBeenCalledWith(['/productos']);
+  });
+
+  it('muestra el conflicto de nombre duplicado', () => {
+    const fixture = TestBed.createComponent(ProductFormComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.formulario.setValue({
+      codigoSku: 'SKU-2',
+      nombre: 'Producto existente',
+      descripcion: '',
+      categoria: ''
+    });
+
+    fixture.componentInstance.guardar();
+    http.expectOne(`${environment.apiUrl}/productos`).flush({
+      status: 409,
+      title: 'Conflicto',
+      detail: 'Ya existe un producto con ese nombre.'
+    }, { status: 409, statusText: 'Conflict' });
+    fixture.detectChanges();
+
+    const alerta = fixture.nativeElement.querySelector('[role="alert"]') as HTMLElement;
+    expect(alerta.textContent).toContain('Ya existe un producto con ese nombre.');
   });
 });

@@ -14,7 +14,14 @@ export class ProductoService {
   private readonly http = inject(HttpClient);
   private readonly url = `${environment.apiUrl}/productos`;
 
-  listar(busqueda: string | null = null, proveedorId: string | null = null, page = 1, pageSize = 20) {
+  listar(
+    busqueda: string | null = null,
+    proveedorId: string | null = null,
+    categoria: string | null = null,
+    activo: boolean | null = true,
+    page = 1,
+    pageSize = 20
+  ) {
     let params = new HttpParams()
       .set('page', page)
       .set('pageSize', pageSize);
@@ -25,6 +32,10 @@ export class ProductoService {
     if (proveedorId) {
       params = params.set('proveedorId', proveedorId);
     }
+    if (categoria?.trim()) {
+      params = params.set('categoria', categoria.trim());
+    }
+    params = params.set('activo', activo === null ? '' : String(activo));
 
     return this.http.get<PagedResult<ProductoListItem>>(this.url, { params });
   }
@@ -43,5 +54,13 @@ export class ProductoService {
 
   desactivar(id: string) {
     return this.http.delete<void>(`${this.url}/${id}`);
+  }
+
+  eliminarPermanente(id: string) {
+    return this.http.delete<void>(`${this.url}/${id}/permanente`);
+  }
+
+  reactivar(id: string) {
+    return this.http.post<Producto>(`${this.url}/${id}/reactivar`, {});
   }
 }

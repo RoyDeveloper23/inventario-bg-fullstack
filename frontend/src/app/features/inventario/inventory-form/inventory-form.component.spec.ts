@@ -47,7 +47,7 @@ describe('InventoryFormComponent', () => {
     return fixture;
   }
 
-  it('valida campos requeridos, precio y stock no negativos', () => {
+  it('valida que el precio sea al menos 0.01 y el stock no negativo', () => {
     const fixture = crearFormulario();
     const formulario = fixture.componentInstance.formulario;
     formulario.setValue({
@@ -63,6 +63,10 @@ describe('InventoryFormComponent', () => {
     expect(formulario.controls.proveedorId.touched).toBeTrue();
     expect(formulario.controls.precioUnitario.hasError('min')).toBeTrue();
     expect(formulario.controls.stockDisponible.hasError('min')).toBeTrue();
+    formulario.controls.precioUnitario.setValue(0);
+    expect(formulario.controls.precioUnitario.hasError('min')).toBeTrue();
+    formulario.controls.precioUnitario.setValue(0.01);
+    expect(formulario.controls.precioUnitario.valid).toBeTrue();
   });
 
   it('crea un lote válido con el contrato de alta', () => {
@@ -70,7 +74,7 @@ describe('InventoryFormComponent', () => {
     const completado = spyOn(fixture.componentInstance.completado, 'emit');
     fixture.componentInstance.formulario.setValue({
       proveedorId: 'proveedor-1',
-      numeroLote: ' LOTE-1 ',
+      numeroLote: ' lote-1 ',
       precioUnitario: 14.5,
       stockDisponible: 12
     });
@@ -87,6 +91,38 @@ describe('InventoryFormComponent', () => {
     });
     request.flush(inventario);
     expect(completado).toHaveBeenCalled();
+  });
+
+  it('rechaza stock cero al crear y permite cero al editar', () => {
+    const crear = crearFormulario();
+    crear.componentInstance.formulario.setValue({
+      proveedorId: 'proveedor-1',
+      numeroLote: 'LOTE-1',
+      precioUnitario: 14.5,
+      stockDisponible: 0
+    });
+
+    crear.componentInstance.guardar();
+    expect(crear.componentInstance.formulario.invalid).toBeTrue();
+    http.expectNone(`${environment.apiUrl}/productos/producto-1/inventarios`);
+
+    const editar = crearFormulario({ ...inventario, stockDisponible: 0 });
+    editar.componentInstance.formulario.controls.stockDisponible.setValue(0);
+    expect(editar.componentInstance.formulario.valid).toBeTrue();
+  });
+
+  it('crea un proveedor y lo selecciona inmediatamente', () => {
+    const fixture = crearFormulario();
+    fixture.componentInstance.mostrandoNuevoProveedor = true;
+    fixture.componentInstance.nombreNuevoProveedor = 'Proveedor Nuevo';
+
+    fixture.componentInstance.crearProveedor();
+
+    const request = http.expectOne(`${environment.apiUrl}/proveedores`);
+    expect(request.request.method).toBe('POST');
+    request.flush({ id: 'proveedor-2', nombre: 'Proveedor Nuevo' });
+
+    expect(fixture.componentInstance.formulario.controls.proveedorId.value).toBe('proveedor-2');
   });
 
   it('actualiza solo precio y stock y limita la eliminación al stock cero confirmado', () => {
