@@ -1,46 +1,63 @@
 <section class="inventario">
-  <div class="encabezado">
+  <a class="back" routerLink="/productos">← Volver a productos</a>
+  <div class="page-head">
     <div>
-      <a routerLink="/productos">Volver a productos</a>
       <h1>{{ producto?.nombre ?? 'Inventario del producto' }}</h1>
       @if (producto) {
-        <p>SKU: {{ producto.codigoSku }}</p>
+        <p class="muted small">SKU {{ producto.codigoSku }} · {{ producto.categoria || 'Sin categoría' }}</p>
       }
     </div>
-    <button type="button" (click)="nuevoLote()" [disabled]="!producto || cargando">
-      Agregar lote
-    </button>
+    @if (producto) {
+      <div class="acciones-producto">
+        <a class="btn btn-ghost" [routerLink]="['/productos', productoId, 'editar']">Editar producto</a>
+        <button class="btn" type="button" (click)="nuevoLote()" [disabled]="cargando">Agregar lote</button>
+      </div>
+    }
   </div>
 
   @if (mostrarFormulario) {
-    <app-inventory-form
-      [productoId]="productoId"
-      [inventario]="inventarioEnEdicion"
-      (completado)="alCompletarFormulario()"
-      (cancelado)="cerrarFormulario()"
-    />
+    <div class="dialog-backdrop" role="presentation">
+      <section class="card dialog" role="dialog" aria-modal="true" aria-labelledby="lote-titulo">
+        <app-inventory-form
+          [productoId]="productoId"
+          [inventario]="inventarioEnEdicion"
+          (completado)="alCompletarFormulario()"
+          (cancelado)="cerrarFormulario()"
+        />
+      </section>
+    </div>
   }
 
   @if (cargando) {
-    <p role="status">Cargando inventario...</p>
+    <p class="estado" role="status">Cargando inventario...</p>
   } @else if (error) {
     <div class="estado" role="alert">
       <p>No se pudo cargar el inventario del producto.</p>
-      <button type="button" (click)="cargar()">Reintentar</button>
+      <button class="btn btn-ghost btn-sm" type="button" (click)="cargar()">Reintentar</button>
     </div>
-  } @else if (inventarios.length === 0) {
-    <div class="estado">
-      <p>Este producto todavía no tiene lotes registrados.</p>
+  } @else if (producto) {
+    <div class="stats">
+      <div class="card stat hero">
+        <span>Stock disponible</span>
+        <b>{{ stockDisponibleTotal }}</b>
+      </div>
+      <div class="card stat">
+        <span>Lotes registrados</span>
+        <b>{{ inventarios.length }}</b>
+      </div>
+      <div class="card stat">
+        <span>Proveedores</span>
+        <b>{{ proveedoresCount }}</b>
+      </div>
     </div>
-  } @else {
-    <div class="tabla">
+    <div class="card table-wrap">
       <table>
         <thead>
           <tr>
             <th>Lote</th>
             <th>Proveedor</th>
-            <th>Precio unitario</th>
-            <th>Cantidad disponible</th>
+            <th class="num">Precio unitario</th>
+            <th class="num">Cantidad disponible</th>
             <th>Fecha de ingreso</th>
             <th><span class="sr-only">Acciones</span></th>
           </tr>
@@ -48,18 +65,53 @@
         <tbody>
           @for (inventario of inventarios; track inventario.id) {
             <tr>
-              <td>{{ inventario.numeroLote }}</td>
+              <td class="mono">{{ inventario.numeroLote }}</td>
               <td>{{ inventario.proveedorNombre }}</td>
-              <td>{{ inventario.precioUnitario | number:'1.2-2' }}</td>
-              <td>{{ inventario.stockDisponible }}</td>
-              <td>{{ inventario.fechaIngreso | date:'dd/MM/yyyy' }}</td>
-              <td>
-                <button type="button" (click)="editar(inventario)">Editar</button>
+              <td class="num">{{ inventario.precioUnitario | number:'1.2-2' }}</td>
+              <td class="num">{{ inventario.stockDisponible }}</td>
+              <td class="muted small">{{ inventario.fechaIngreso | date:'dd/MM/yyyy' }}</td>
+              <td class="actions">
+                <button class="link" type="button" (click)="editar(inventario)">Editar</button>
+                <button class="link danger" type="button" (click)="solicitarEliminacion(inventario)">Eliminar</button>
               </td>
+            </tr>
+          }
+          @if (inventarios.length === 0) {
+            <tr>
+              <td class="empty" colspan="6">Aún no hay lotes. Agrega el primero para registrar stock.</td>
             </tr>
           }
         </tbody>
       </table>
+    </div>
+  }
+
+  @if (inventarioParaEliminar; as lote) {
+    <div class="dialog-backdrop" role="presentation">
+      <section
+        class="card confirm-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="eliminar-lote-titulo"
+      >
+        <h2 id="eliminar-lote-titulo">Eliminar lote</h2>
+        <p class="confirm-message">
+          ¿Eliminar el lote <strong>{{ lote.numeroLote }}</strong>? Esta acción descontará su cantidad del stock disponible.
+        </p>
+        <div class="form-actions">
+          <button
+            class="btn btn-ghost"
+            type="button"
+            (click)="cancelarEliminacion()"
+            [disabled]="eliminandoInventario"
+          >
+            Cancelar
+          </button>
+          <button class="btn" type="button" (click)="confirmarEliminacion()" [disabled]="eliminandoInventario">
+            {{ eliminandoInventario ? 'Eliminando...' : 'Eliminar lote' }}
+          </button>
+        </div>
+      </section>
     </div>
   }
 </section>

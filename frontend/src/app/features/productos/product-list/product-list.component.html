@@ -1,10 +1,13 @@
 <section class="catalogo">
-  <div class="encabezado">
-    <h1>Productos</h1>
-    <a class="boton primario" routerLink="/productos/nuevo">Nuevo producto</a>
+  <div class="page-head">
+    <div>
+      <h1>Productos</h1>
+      <p class="muted">Busca, edita y revisa el stock de tu catálogo.</p>
+    </div>
+    <a class="btn" routerLink="/productos/nuevo">Nuevo producto</a>
   </div>
 
-  <form class="filtros" [formGroup]="filtros" (ngSubmit)="buscar()" novalidate>
+  <form class="card filters filtros" [formGroup]="filtros" (ngSubmit)="buscar()" novalidate>
     <label>
       Buscar
       <input type="search" formControlName="busqueda" placeholder="Nombre o SKU" />
@@ -18,58 +21,174 @@
         }
       </select>
     </label>
-    <button type="submit" [disabled]="cargando">Buscar</button>
+    <label>
+      Categoría
+      <input type="search" formControlName="categoria" placeholder="Ej. Bebidas" />
+    </label>
+    <label>
+      Estado
+      <select formControlName="estado">
+        <option value="activos">Activos</option>
+        <option value="inactivos">Inactivos</option>
+        <option value="todos">Todos</option>
+      </select>
+    </label>
+    <button class="btn btn-ghost" type="submit" [disabled]="cargando">Buscar</button>
+    <button class="btn btn-ghost" type="button" (click)="limpiarFiltros()" [disabled]="cargando">Limpiar</button>
   </form>
 
-  @if (cargando) {
-    <p role="status">Cargando productos...</p>
-  } @else if (error) {
-    <div class="estado" role="alert">
-      <p>No se pudieron cargar los productos.</p>
-      <button type="button" (click)="cargar()">Reintentar</button>
-    </div>
-  } @else if (productos.length === 0) {
-    <div class="estado">
-      <p>No hay productos que coincidan con los filtros.</p>
-    </div>
-  } @else {
-    <div class="tabla">
-      <table>
-        <thead>
-          <tr>
-            <th>SKU</th>
-            <th>Nombre</th>
-            <th>Categoria</th>
-            <th>Stock</th>
-            <th>Estado</th>
-            <th><span class="sr-only">Acciones</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (producto of productos; track producto.id) {
+  <div class="card table-card">
+    @if (cargando) {
+      <div class="estado" role="status">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Cargando productos...</span>
+      </div>
+    } @else if (error) {
+      <div class="estado" role="alert">
+        <p>No se pudieron cargar los productos.</p>
+        <button class="btn btn-ghost btn-sm" type="button" (click)="cargar()">Reintentar</button>
+      </div>
+    } @else if (productos.length === 0) {
+      <div class="estado">
+        <p>No hay productos que coincidan con los filtros.</p>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead>
             <tr>
-              <td>{{ producto.codigoSku }}</td>
-              <td>{{ producto.nombre }}</td>
-              <td>{{ producto.categoria || '-' }}</td>
-              <td>{{ producto.stockTotal }}</td>
-              <td>{{ producto.activo ? 'Activo' : 'Inactivo' }}</td>
-              <td class="acciones">
-                <a [routerLink]="['/productos', producto.id, 'editar']">Editar</a>
-                <a [routerLink]="['/productos', producto.id, 'inventario']">Ver stock</a>
-                @if (producto.activo) {
-                  <button type="button" (click)="desactivar(producto)">Desactivar</button>
-                }
-              </td>
+              <th>SKU</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Proveedores</th>
+              <th class="num">Stock</th>
+              <th>Estado</th>
+              <th><span class="sr-only">Acciones</span></th>
             </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            @for (producto of productos; track producto.id) {
+              <tr>
+                <td class="mono">{{ producto.codigoSku }}</td>
+                <td>
+                  <strong>{{ producto.nombre }}</strong>
+                  <div class="muted small">{{ producto.descripcion || 'Sin descripción' }}</div>
+                </td>
+                <td>{{ producto.categoria || '-' }}</td>
+                <td class="small">{{ producto.proveedores.length ? producto.proveedores.join(', ') : 'Sin lotes' }}</td>
+                <td class="num">{{ producto.stockTotal }}</td>
+                <td>
+                  <span class="pill" [class.on]="producto.activo" [class.off]="!producto.activo">
+                    {{ producto.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <a class="link" [routerLink]="['/productos', producto.id, 'inventario']">Lotes</a>
+                  <a class="link" [routerLink]="['/productos', producto.id, 'editar']">Editar</a>
+                  @if (producto.activo) {
+                    <button class="link danger" type="button" (click)="desactivar(producto)">Desactivar</button>
+                  } @else {
+                    <button class="link" type="button" (click)="reactivar(producto)">Activar</button>
+                  }
+                  <span
+                    class="relative inline-flex group"
+                    [class.cursor-not-allowed]="producto.proveedores.length > 0 || producto.stockTotal > 0"
+                  >
+                    <button
+                      class="link danger eliminar-producto"
+                      [class.opacity-45]="producto.proveedores.length > 0 || producto.stockTotal > 0"
+                      [class.cursor-not-allowed]="producto.proveedores.length > 0 || producto.stockTotal > 0"
+                      type="button"
+                      (click)="eliminarPermanentemente(producto)"
+                      [disabled]="producto.proveedores.length > 0 || producto.stockTotal > 0"
+                    >
+                      Eliminar
+                    </button>
+                    @if (producto.proveedores.length > 0 || producto.stockTotal > 0) {
+                      <span
+                        role="tooltip"
+                        class="absolute bottom-full right-0 mb-2 w-56 px-3 py-2 rounded-xl text-xs font-medium whitespace-normal break-words text-left shadow-lg pointer-events-none opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity z-30 bg-[var(--ink)] text-[var(--card)] border border-[var(--line)]"
+                      >
+                        No se puede eliminar porque tiene lotes registrados
+                      </span>
+                    }
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
 
-    <nav class="paginacion" aria-label="Paginacion de productos">
-      <button type="button" (click)="cambiarPagina(pagina - 1)" [disabled]="pagina === 1">Anterior</button>
-      <span>Pagina {{ pagina }} de {{ totalPaginas }}</span>
-      <button type="button" (click)="cambiarPagina(pagina + 1)" [disabled]="pagina >= totalPaginas">Siguiente</button>
-    </nav>
+    @if (!cargando && !error && total > 0) {
+      <nav class="paginacion" aria-label="Paginación de productos">
+        <button class="btn btn-ghost btn-sm" type="button" (click)="cambiarPagina(pagina - 1)" [disabled]="pagina === 1">Anterior</button>
+        <span>Página {{ pagina }} de {{ totalPaginas }}</span>
+        <button class="btn btn-ghost btn-sm" type="button" (click)="cambiarPagina(pagina + 1)" [disabled]="pagina >= totalPaginas">Siguiente</button>
+        <label class="selector-pagina">
+          Mostrar
+          <select #selectorTamano [value]="tamanoPagina" (change)="cambiarTamanoPagina(selectorTamano.value)">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </label>
+      </nav>
+    }
+  </div>
+
+  @if (productoParaConfirmar; as producto) {
+    <div class="confirm-overlay" role="presentation">
+      <section
+        class="card confirm-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirmar-estado-titulo"
+      >
+        <h2 id="confirmar-estado-titulo">
+          @switch (accionPendiente) {
+            @case ('desactivar') { Desactivar producto }
+            @case ('activar') { Activar producto }
+            @case ('eliminar') { Eliminar producto permanentemente }
+          }
+        </h2>
+        @if (accionPendiente === 'eliminar') {
+          <p class="confirm-message">
+            ¿Eliminar permanentemente el producto <strong>{{ producto.nombre }}</strong>? Esta acción no se puede deshacer.
+          </p>
+        } @else {
+          <p class="confirm-message">
+            ¿Deseas {{ accionPendiente === 'desactivar' ? 'desactivar' : 'activar' }}
+            <strong>{{ producto.nombre }}</strong>?
+          </p>
+        }
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" (click)="cancelarCambioEstado()" [disabled]="actualizandoEstado">
+            Cancelar
+          </button>
+          <button type="button" class="btn" (click)="confirmarCambioEstado()" [disabled]="actualizandoEstado">
+            @if (actualizandoEstado) {
+              {{
+                accionPendiente === 'desactivar'
+                  ? 'Desactivando...'
+                  : accionPendiente === 'activar'
+                    ? 'Activando...'
+                    : 'Eliminando...'
+              }}
+            } @else {
+              {{
+                accionPendiente === 'desactivar'
+                  ? 'Desactivar'
+                  : accionPendiente === 'activar'
+                    ? 'Activar'
+                    : 'Eliminar'
+              }}
+            }
+          </button>
+        </div>
+      </section>
+    </div>
   }
 </section>

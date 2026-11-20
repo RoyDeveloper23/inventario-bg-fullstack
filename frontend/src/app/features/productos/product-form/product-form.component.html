@@ -1,44 +1,63 @@
 <section class="formulario-producto">
-  <div class="encabezado">
-    <h1>{{ id ? 'Editar producto' : 'Nuevo producto' }}</h1>
-    <a routerLink="/productos">Volver al listado</a>
+  <a class="back" routerLink="/productos">← Volver al listado</a>
+  <div class="page-head">
+    <div>
+      <h1>{{ id ? 'Editar producto' : 'Nuevo producto' }}</h1>
+      <p class="muted">{{ id ? 'Actualiza los datos del producto.' : 'Registra la información básica del producto.' }}</p>
+    </div>
   </div>
 
   @if (cargando) {
-    <p role="status">Cargando producto...</p>
+    <p class="estado" role="status">Cargando producto...</p>
   } @else {
-    <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
-      <label for="codigoSku">SKU</label>
-      <input id="codigoSku" type="text" formControlName="codigoSku" />
-      @if (formulario.controls.codigoSku.touched && formulario.controls.codigoSku.hasError('required')) {
-        <p class="error">El SKU es obligatorio.</p>
-      } @else if (formulario.controls.codigoSku.touched && formulario.controls.codigoSku.hasError('maxlength')) {
-        <p class="error">El SKU no puede superar 100 caracteres.</p>
+    <form class="card form-card" [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+      <div class="grid-2">
+        <div class="field">
+          <label for="codigoSku">SKU</label>
+          <input id="codigoSku" type="text" formControlName="codigoSku" placeholder="Ej. SKU-BG-002" />
+          @if (formulario.controls.codigoSku.touched && formulario.controls.codigoSku.hasError('required')) {
+            <p class="error">El SKU es obligatorio.</p>
+          } @else if (formulario.controls.codigoSku.touched && formulario.controls.codigoSku.hasError('maxlength')) {
+            <p class="error">El SKU no puede superar 100 caracteres.</p>
+          }
+        </div>
+        <div class="field">
+          <label for="categoria">Categoría</label>
+          <input id="categoria" type="text" formControlName="categoria" placeholder="Ej. Tecnología" />
+          @if (formulario.controls.categoria.touched && formulario.controls.categoria.hasError('maxlength')) {
+            <p class="error">La categoría no puede superar 100 caracteres.</p>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" formControlName="nombre" placeholder="Nombre visible del producto" />
+        @if (formulario.controls.nombre.touched && formulario.controls.nombre.hasError('required')) {
+          <p class="error">El nombre es obligatorio.</p>
+        } @else if (formulario.controls.nombre.touched && formulario.controls.nombre.hasError('maxlength')) {
+          <p class="error">El nombre no puede superar 200 caracteres.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" rows="4" formControlName="descripcion" placeholder="Características principales"></textarea>
+        @if (formulario.controls.descripcion.touched && formulario.controls.descripcion.hasError('maxlength')) {
+          <p class="error">La descripción no puede superar 1000 caracteres.</p>
+        }
+      </div>
+
+      @if (errorGuardar) {
+        <p class="error" role="alert">{{ errorGuardar }}</p>
       }
 
-      <label for="nombre">Nombre</label>
-      <input id="nombre" type="text" formControlName="nombre" />
-      @if (formulario.controls.nombre.touched && formulario.controls.nombre.hasError('required')) {
-        <p class="error">El nombre es obligatorio.</p>
-      } @else if (formulario.controls.nombre.touched && formulario.controls.nombre.hasError('maxlength')) {
-        <p class="error">El nombre no puede superar 200 caracteres.</p>
-      }
-
-      <label for="descripcion">Descripcion</label>
-      <textarea id="descripcion" rows="4" formControlName="descripcion"></textarea>
-      @if (formulario.controls.descripcion.touched && formulario.controls.descripcion.hasError('maxlength')) {
-        <p class="error">La descripcion no puede superar 1000 caracteres.</p>
-      }
-
-      <label for="categoria">Categoria</label>
-      <input id="categoria" type="text" formControlName="categoria" />
-      @if (formulario.controls.categoria.touched && formulario.controls.categoria.hasError('maxlength')) {
-        <p class="error">La categoria no puede superar 100 caracteres.</p>
-      }
-
-      <button type="submit" [disabled]="enviando">
-        {{ enviando ? 'Guardando...' : 'Guardar' }}
-      </button>
+      <div class="form-actions">
+        <a class="btn btn-ghost" routerLink="/productos">Cancelar</a>
+        <button class="btn" type="submit" [disabled]="enviando">
+          {{ enviando ? 'Guardando...' : id ? 'Guardar cambios' : 'Crear producto' }}
+        </button>
+      </div>
     </form>
   }
 </section>

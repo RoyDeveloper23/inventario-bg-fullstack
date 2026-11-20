@@ -1,51 +1,86 @@
 .inventario {
   display: grid;
-  gap: 1.25rem;
 }
 
-.encabezado {
-  display: flex;
+.inventario > .page-head {
   align-items: center;
-  justify-content: space-between;
+  margin-bottom: 0;
 }
 
-h1,
-p {
-  margin: 0.5rem 0;
+.acciones-producto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.tabla {
-  overflow-x: auto;
-  border-radius: 0.5rem;
-  background: white;
+.inventario .table-wrap {
+  min-height: 120px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.inventario table {
+  min-width: 700px;
 }
 
-th,
-td {
-  padding: 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
-  text-align: left;
+.inventario .estado {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--card);
 }
 
-a,
-button {
-  display: inline-block;
-  border: 0;
-  border-radius: 0.375rem;
-  padding: 0.5rem 0.75rem;
-  background: #e2e8f0;
-  color: #0f172a;
-  text-decoration: none;
-  cursor: pointer;
+.dialog-backdrop {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: grid;
+  overflow-y: auto;
+  place-items: center;
+  padding: 24px 16px;
+  background: rgb(27 20 32 / 35%);
 }
 
-.estado {
-  border-radius: 0.5rem;
-  background: white;
-  padding: 1.25rem;
+.dialog {
+  width: min(560px, 100%);
+  padding: 0;
+  box-shadow: 0 24px 60px rgb(27 20 32 / 22%);
+}
+
+.confirm-dialog {
+  width: min(480px, 100%);
+  padding: 26px;
+  box-shadow: 0 24px 60px rgb(27 20 32 / 22%);
+}
+
+.confirm-dialog .confirm-message {
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+.confirm-dialog .confirm-message strong {
+  color: var(--ink);
+}
+
+.confirm-dialog .form-actions {
+  margin-top: 24px;
+}
+
+@media (max-width: 560px) {
+  .inventario > .page-head {
+    align-items: flex-start;
+  }
+
+  .acciones-producto {
+    width: 100%;
+  }
+
+  .acciones-producto > * {
+    flex: 1;
+  }
+
+  .confirm-dialog .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .confirm-dialog .form-actions > * {
+    width: 100%;
+  }
 }

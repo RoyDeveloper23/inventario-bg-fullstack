@@ -1,65 +1,17 @@
 .formulario-producto {
   display: grid;
-  gap: 1rem;
 }
 
-.encabezado {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-h1 {
-  margin: 0;
-}
-
-form {
-  display: grid;
-  gap: 0.65rem;
-  max-width: 44rem;
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  background: white;
-}
-
-label {
-  margin-top: 0.35rem;
-  font-weight: 600;
-}
-
-input,
-textarea {
-  box-sizing: border-box;
+.formulario-producto > .form-card {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #94a3b8;
-  border-radius: 0.375rem;
 }
 
-button,
-a {
-  border: 0;
-  border-radius: 0.375rem;
-  padding: 0.65rem 0.75rem;
-  background: #1d4ed8;
-  color: white;
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 700;
-}
+@media (max-width: 560px) {
+  .form-actions {
+    flex-direction: column-reverse;
+  }
 
-button {
-  margin-top: 0.75rem;
-  justify-self: start;
-}
-
-button:disabled {
-  cursor: wait;
-  opacity: 0.65;
-}
-
-.error {
-  margin: -0.35rem 0 0;
-  color: #b91c1c;
-  font-size: 0.875rem;
+  .form-actions > * {
+    width: 100%;
+  }
 }

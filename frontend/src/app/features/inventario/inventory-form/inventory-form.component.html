@@ -1,5 +1,5 @@
 <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
-  <h2>{{ inventario ? 'Editar lote' : 'Agregar lote' }}</h2>
+  <h2 id="lote-titulo">{{ inventario ? 'Editar lote' : 'Agregar lote' }}</h2>
 
   @if (inventario) {
     <p><strong>Proveedor:</strong> {{ inventario.proveedorNombre }}</p>
@@ -10,53 +10,80 @@
     } @else if (errorProveedores) {
       <div role="alert">
         <p>No se pudieron cargar los proveedores.</p>
-        <button type="button" (click)="cargarProveedores()">Reintentar</button>
+        <button class="btn btn-ghost btn-sm" type="button" (click)="cargarProveedores()">Reintentar</button>
       </div>
     } @else if (proveedores.length === 0) {
       <p role="status">No hay proveedores disponibles.</p>
     }
 
-    <label for="proveedorId">Proveedor</label>
-    <select id="proveedorId" formControlName="proveedorId">
-      <option value="">Selecciona un proveedor</option>
-      @for (proveedor of proveedores; track proveedor.id) {
-        <option [value]="proveedor.id">{{ proveedor.nombre }}</option>
+    <div class="field">
+      <label for="proveedorId">Proveedor</label>
+      <select id="proveedorId" formControlName="proveedorId">
+        <option value="">Selecciona un proveedor</option>
+        @for (proveedor of proveedores; track proveedor.id) {
+          <option [value]="proveedor.id">{{ proveedor.nombre }}</option>
+        }
+      </select>
+      @if (formulario.controls.proveedorId.touched && formulario.controls.proveedorId.hasError('required')) {
+        <p class="error">Selecciona un proveedor.</p>
       }
-    </select>
-    @if (formulario.controls.proveedorId.touched && formulario.controls.proveedorId.hasError('required')) {
-      <p class="error">Selecciona un proveedor.</p>
+    </div>
+    <button class="link" type="button" (click)="mostrandoNuevoProveedor = !mostrandoNuevoProveedor">
+      + Nuevo proveedor
+    </button>
+    @if (mostrandoNuevoProveedor) {
+      <div class="quick-provider">
+        <label for="nombreNuevoProveedor">Nombre del proveedor</label>
+        <input
+          id="nombreNuevoProveedor"
+          type="text"
+          maxlength="200"
+          [(ngModel)]="nombreNuevoProveedor"
+          [ngModelOptions]="{ standalone: true }"
+        />
+        <button class="btn btn-ghost btn-sm" type="button" (click)="crearProveedor()" [disabled]="creandoProveedor">
+          {{ creandoProveedor ? 'Creando...' : 'Crear proveedor' }}
+        </button>
+      </div>
     }
-
-    <label for="numeroLote">Número de lote</label>
-    <input id="numeroLote" type="text" formControlName="numeroLote" maxlength="100" />
-    @if (formulario.controls.numeroLote.touched && formulario.controls.numeroLote.hasError('required')) {
-      <p class="error">El número de lote es obligatorio.</p>
-    } @else if (formulario.controls.numeroLote.touched && formulario.controls.numeroLote.hasError('maxlength')) {
-      <p class="error">El número de lote no puede superar 100 caracteres.</p>
-    }
+    <div class="field">
+      <label for="numeroLote">Número de lote</label>
+      <input id="numeroLote" type="text" formControlName="numeroLote" maxlength="100" placeholder="Ej. LOTE-2026-003" />
+      @if (formulario.controls.numeroLote.touched && formulario.controls.numeroLote.hasError('required')) {
+        <p class="error">El número de lote es obligatorio.</p>
+      } @else if (formulario.controls.numeroLote.touched && formulario.controls.numeroLote.hasError('maxlength')) {
+        <p class="error">El número de lote no puede superar 100 caracteres.</p>
+      }
+    </div>
   }
 
-  <label for="precioUnitario">Precio unitario</label>
-  <input id="precioUnitario" type="number" min="0" step="0.01" formControlName="precioUnitario" />
-  @if (formulario.controls.precioUnitario.touched && formulario.controls.precioUnitario.hasError('min')) {
-    <p class="error">El precio no puede ser negativo.</p>
-  }
+  <div class="grid-2">
+    <div class="field">
+      <label for="precioUnitario">Precio unitario</label>
+      <input id="precioUnitario" type="number" min="0.01" step="0.01" formControlName="precioUnitario" />
+      @if (formulario.controls.precioUnitario.touched && formulario.controls.precioUnitario.hasError('min')) {
+        <p class="error">El precio debe ser al menos 0.01.</p>
+      }
+    </div>
 
-  <label for="stockDisponible">Cantidad disponible</label>
-  <input id="stockDisponible" type="number" min="0" step="1" formControlName="stockDisponible" />
-  @if (formulario.controls.stockDisponible.touched && formulario.controls.stockDisponible.hasError('min')) {
-    <p class="error">La cantidad no puede ser negativa.</p>
-  } @else if (formulario.controls.stockDisponible.touched && formulario.controls.stockDisponible.hasError('pattern')) {
-    <p class="error">La cantidad debe ser un número entero.</p>
-  }
+    <div class="field">
+      <label for="stockDisponible">Cantidad disponible</label>
+      <input id="stockDisponible" type="number" [min]="inventario ? 0 : 1" step="1" formControlName="stockDisponible" />
+      @if (formulario.controls.stockDisponible.touched && formulario.controls.stockDisponible.hasError('min')) {
+        <p class="error">La cantidad no puede ser negativa.</p>
+      } @else if (formulario.controls.stockDisponible.touched && formulario.controls.stockDisponible.hasError('pattern')) {
+        <p class="error">La cantidad debe ser un número entero.</p>
+      }
+    </div>
+  </div>
 
-  <div class="acciones">
-    <button type="submit" [disabled]="enviando || eliminando || cargandoProveedores || errorProveedores">
+  <div class="form-actions acciones">
+    <button class="btn btn-ghost" type="button" (click)="cancelado.emit()" [disabled]="enviando || eliminando">Cancelar</button>
+    <button class="btn" type="submit" [disabled]="enviando || eliminando || cargandoProveedores || errorProveedores">
       {{ enviando ? 'Guardando...' : 'Guardar lote' }}
     </button>
-    <button type="button" (click)="cancelado.emit()" [disabled]="enviando || eliminando">Cancelar</button>
     @if (inventario?.stockDisponible === 0) {
-      <button type="button" class="peligro" (click)="eliminar()" [disabled]="enviando || eliminando">
+      <button type="button" class="link danger" (click)="eliminar()" [disabled]="enviando || eliminando">
         {{ eliminando ? 'Eliminando...' : 'Eliminar lote' }}
       </button>
     }
