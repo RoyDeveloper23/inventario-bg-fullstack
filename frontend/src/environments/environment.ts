@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://inventario-bg-api.onrender.com'
+  apiUrl: 'https://inventario-bg-api.onrender.com/api'
 };
