@@ -25,11 +25,11 @@ public sealed class ProductoInventarioRepository : IProductoInventarioRepository
         Guid? excluirId = null,
         CancellationToken cancellationToken = default)
     {
-        var lote = numeroLote.Trim();
+        var lote = numeroLote.Trim().ToUpperInvariant();
         return _context.ProductosInventario.AsNoTracking().AnyAsync(
             x => x.ProductoId == productoId &&
                  x.ProveedorId == proveedorId &&
-                 x.NumeroLote == lote &&
+                 x.NumeroLote.Trim().ToUpper() == lote &&
                  (!excluirId.HasValue || x.Id != excluirId.Value),
             cancellationToken);
     }

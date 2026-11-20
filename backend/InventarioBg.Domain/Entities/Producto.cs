@@ -38,6 +38,7 @@ public sealed class Producto
     }
 
     public void Desactivar() => Activo = false;
+    public void Reactivar() => Activo = true;
 
     private static string NormalizarObligatorio(string valor, string nombre)
     {

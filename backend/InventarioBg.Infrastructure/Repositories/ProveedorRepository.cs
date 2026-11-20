@@ -25,4 +25,22 @@ public sealed class ProveedorRepository : IProveedorRepository
         return _context.Proveedores
             .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
+
+    public Task<bool> ExisteNombreAsync(string nombre, CancellationToken cancellationToken = default)
+    {
+        var normalizado = nombre.Trim().ToUpperInvariant();
+        return _context.Proveedores.AsNoTracking().AnyAsync(
+            x => x.Nombre.Trim().ToUpper() == normalizado,
+            cancellationToken);
+    }
+
+    public Task AgregarAsync(Proveedor proveedor, CancellationToken cancellationToken = default)
+    {
+        return _context.Proveedores.AddAsync(proveedor, cancellationToken).AsTask();
+    }
+
+    public Task GuardarAsync(CancellationToken cancellationToken = default)
+    {
+        return _context.SaveChangesAsync(cancellationToken);
+    }
 }

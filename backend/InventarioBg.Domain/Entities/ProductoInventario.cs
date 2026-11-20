@@ -38,7 +38,7 @@ public sealed class ProductoInventario
         Id = id;
         ProductoId = productoId;
         ProveedorId = proveedorId;
-        NumeroLote = numeroLote?.Trim() ?? string.Empty;
+        NumeroLote = numeroLote?.Trim().ToUpperInvariant() ?? string.Empty;
         if (NumeroLote.Length == 0)
         {
             throw new ArgumentException("El número de lote es obligatorio.", nameof(numeroLote));
@@ -54,9 +54,9 @@ public sealed class ProductoInventario
 
     public void Actualizar(decimal precioUnitario, int stockDisponible)
     {
-        if (precioUnitario < 0)
+        if (precioUnitario < 0.01m)
         {
-            throw new ArgumentOutOfRangeException(nameof(precioUnitario), "El precio no puede ser negativo.");
+            throw new ArgumentOutOfRangeException(nameof(precioUnitario), "El precio debe ser al menos 0.01.");
         }
         if (stockDisponible < 0)
         {

@@ -11,8 +11,9 @@ public sealed class CrearProductoInventarioDto
     [MaxLength(100)]
     public string NumeroLote { get; init; } = string.Empty;
 
+    [Range(0.01, double.MaxValue)]
     public decimal PrecioUnitario { get; init; }
 
-    [Range(0, int.MaxValue)]
+    [Range(1, int.MaxValue)]
     public int StockDisponible { get; init; }
 }

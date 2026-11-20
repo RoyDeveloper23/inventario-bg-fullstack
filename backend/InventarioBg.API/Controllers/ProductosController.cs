@@ -24,11 +24,18 @@ public sealed class ProductosController(
     public async Task<ActionResult<PagedResultDto<ProductoListItemDto>>> Listar(
         [FromQuery] string? busqueda,
         [FromQuery] Guid? proveedorId,
+        [FromQuery] string? categoria,
+        [FromQuery] bool? activo = true,
         [FromQuery, Range(1, int.MaxValue)] int page = 1,
         [FromQuery, Range(1, 100)] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
-        return Ok(await productoService.ListarAsync(busqueda, proveedorId, page, pageSize, cancellationToken));
+        var filtroActivo = Request.Query.ContainsKey("activo") &&
+            string.IsNullOrWhiteSpace(Request.Query["activo"].ToString())
+                ? null
+                : activo;
+        return Ok(await productoService.ListarAsync(
+            busqueda, proveedorId, categoria, filtroActivo, page, pageSize, cancellationToken));
     }
 
     [HttpGet("{id:guid}")]
@@ -77,6 +84,28 @@ public sealed class ProductosController(
         return NoContent();
     }
 
+    [HttpDelete("{id:guid}/permanente")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> EliminarPermanente(Guid id, CancellationToken cancellationToken)
+    {
+        await productoService.EliminarPermanenteAsync(id, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPost("{id:guid}/reactivar")]
+    [ProducesResponseType(typeof(ProductoDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ProductoDto>> Reactivar(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await productoService.ReactivarAsync(id, cancellationToken));
+    }
+
     [HttpGet("{productoId:guid}/inventarios")]
     [ProducesResponseType(typeof(ItemsResultDto<ProductoInventarioDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -122,7 +151,6 @@ public sealed class ProductosController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> EliminarInventario(
         Guid productoId,
         Guid inventarioId,

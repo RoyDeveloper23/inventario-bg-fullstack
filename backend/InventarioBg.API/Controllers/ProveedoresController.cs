@@ -21,4 +21,17 @@ public sealed class ProveedoresController(IProveedorService proveedorService) : 
         IReadOnlyList<ProveedorDto> items = await proveedorService.ListarActivosAsync(cancellationToken);
         return Ok(new ItemsResultDto<ProveedorDto>(items));
     }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(ProveedorDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<ProveedorDto>> Crear(
+        CrearProveedorDto solicitud,
+        CancellationToken cancellationToken)
+    {
+        var proveedor = await proveedorService.CrearAsync(solicitud, cancellationToken);
+        return Created($"/api/proveedores/{proveedor.Id}", proveedor);
+    }
 }

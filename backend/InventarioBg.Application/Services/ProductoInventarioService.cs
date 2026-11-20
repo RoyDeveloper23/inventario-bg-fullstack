@@ -25,7 +25,12 @@ public sealed class ProductoInventarioService(
         CrearProductoInventarioDto solicitud,
         CancellationToken cancellationToken = default)
     {
+        ValidarPrecio(solicitud.PrecioUnitario);
         await ObtenerProductoActivoAsync(productoId, cancellationToken);
+        if (solicitud.StockDisponible < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(solicitud.StockDisponible), "Al crear un lote el stock debe ser al menos 1.");
+        }
         if (solicitud.ProveedorId == Guid.Empty)
         {
             throw new ArgumentException("El proveedor es obligatorio.", nameof(solicitud));
@@ -37,8 +42,9 @@ public sealed class ProductoInventarioService(
             throw new RecursoNoEncontradoException("No se encontró el proveedor.");
         }
 
+        var numeroLote = solicitud.NumeroLote?.Trim().ToUpperInvariant() ?? string.Empty;
         if (await inventarioRepository.ExisteLoteAsync(
-                productoId, solicitud.ProveedorId, solicitud.NumeroLote, cancellationToken: cancellationToken))
+                productoId, solicitud.ProveedorId, numeroLote, cancellationToken: cancellationToken))
         {
             throw new ConflictoAplicacionException("Ya existe ese lote para el producto y proveedor.");
         }
@@ -47,7 +53,7 @@ public sealed class ProductoInventarioService(
             Guid.NewGuid(),
             productoId,
             solicitud.ProveedorId,
-            solicitud.NumeroLote,
+            numeroLote,
             solicitud.PrecioUnitario,
             solicitud.StockDisponible);
         await inventarioRepository.AgregarAsync(inventario, cancellationToken);
@@ -61,6 +67,7 @@ public sealed class ProductoInventarioService(
         ActualizarProductoInventarioDto solicitud,
         CancellationToken cancellationToken = default)
     {
+        ValidarPrecio(solicitud.PrecioUnitario);
         await ObtenerProductoActivoAsync(productoId, cancellationToken);
         var inventario = await ObtenerInventarioAsync(productoId, inventarioId, cancellationToken);
         inventario.Actualizar(solicitud.PrecioUnitario, solicitud.StockDisponible);
@@ -75,11 +82,6 @@ public sealed class ProductoInventarioService(
     {
         await ObtenerProductoActivoAsync(productoId, cancellationToken);
         var inventario = await ObtenerInventarioAsync(productoId, inventarioId, cancellationToken);
-        if (inventario.StockDisponible != 0)
-        {
-            throw new ConflictoAplicacionException("Solo se pueden eliminar lotes sin existencias.");
-        }
-
         await inventarioRepository.EliminarAsync(inventario, cancellationToken);
         await inventarioRepository.GuardarAsync(cancellationToken);
     }
@@ -116,4 +118,12 @@ public sealed class ProductoInventarioService(
         inventario.PrecioUnitario,
         inventario.StockDisponible,
         inventario.FechaIngreso);
+
+    private static void ValidarPrecio(decimal precioUnitario)
+    {
+        if (precioUnitario < 0.01m)
+        {
+            throw new ArgumentOutOfRangeException(nameof(precioUnitario), "El precio debe ser al menos 0.01.");
+        }
+    }
 }

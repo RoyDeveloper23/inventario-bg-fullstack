@@ -7,4 +7,5 @@ public sealed record ProductoListItemDto(
     string? Descripcion,
     string? Categoria,
     bool Activo,
-    long StockTotal);
+    long StockTotal,
+    IReadOnlyList<string> Proveedores);
