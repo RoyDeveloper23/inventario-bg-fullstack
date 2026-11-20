@@ -32,7 +32,7 @@ export class ProductListComponent implements OnInit {
   productos: ProductoListItem[] = [];
   proveedores: Proveedor[] = [];
   pagina = 1;
-  tamanoPagina = 10;
+  tamanoPagina = 5;
   total = 0;
   cargando = false;
   error = false;

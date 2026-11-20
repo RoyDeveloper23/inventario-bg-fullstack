@@ -87,7 +87,7 @@ describe('ProductListComponent', () => {
       'Bebidas',
       false,
       1,
-      10
+      5
     );
   });
 
