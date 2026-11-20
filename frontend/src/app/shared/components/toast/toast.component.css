@@ -1,33 +1,28 @@
 :host {
-  position: fixed;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 50;
+  display: block;
 }
 
 .toast {
   display: flex;
   align-items: center;
   gap: 1rem;
-  max-width: 24rem;
+  width: max-content;
+  max-width: min(24rem, calc(100vw - 3rem));
   padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 30px rgb(15 23 42 / 20%);
-  color: white;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .toast-error {
-  background: #b91c1c;
+  border-left: 4px solid var(--danger);
 }
 
 .toast-success {
-  background: #166534;
+  border-left: 4px solid var(--ok);
 }
 
-button {
-  border: 0;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  font-weight: 700;
+.toast button {
+  flex: none;
 }

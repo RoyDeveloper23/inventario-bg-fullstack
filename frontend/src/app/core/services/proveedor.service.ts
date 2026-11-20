@@ -12,4 +12,8 @@ export class ProveedorService {
   listar() {
     return this.http.get<ItemsResult<Proveedor>>(`${environment.apiUrl}/proveedores`);
   }
+
+  crear(nombre: string) {
+    return this.http.post<Proveedor>(`${environment.apiUrl}/proveedores`, { nombre });
+  }
 }

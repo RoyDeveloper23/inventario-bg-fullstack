@@ -33,4 +33,16 @@ describe('ProveedorService', () => {
 
     expect(resultado).toEqual({ items: [{ id: 'proveedor-1', nombre: 'Proveedor Uno' }] });
   });
+
+  it('crea un proveedor', () => {
+    let resultado: { id: string; nombre: string } | undefined;
+    service.crear('Proveedor Nuevo').subscribe((respuesta) => resultado = respuesta);
+
+    const request = http.expectOne(`${environment.apiUrl}/proveedores`);
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ nombre: 'Proveedor Nuevo' });
+    request.flush({ id: 'proveedor-2', nombre: 'Proveedor Nuevo' });
+
+    expect(resultado).toEqual({ id: 'proveedor-2', nombre: 'Proveedor Nuevo' });
+  });
 });

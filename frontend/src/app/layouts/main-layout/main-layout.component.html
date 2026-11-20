@@ -1,11 +1,24 @@
-<header class="header">
-  <a routerLink="/" class="brand">Inventario BG</a>
-  <nav aria-label="Navegacion principal">
-    <a routerLink="/productos">Productos</a>
-    <span>{{ auth.usuario()?.nombre }}</span>
-    <button type="button" (click)="logout()">Cerrar sesion</button>
-  </nav>
+<header class="app-header">
+  <div class="bar">
+    <a routerLink="/" class="brand">
+      <span class="brand-mark" aria-hidden="true">BGD</span>
+      <span>Inventario BG</span>
+    </a>
+    <div class="user">
+      <span>{{ auth.usuario()?.nombre }}</span>
+      <button
+   type="button"
+   class="btn btn-ghost btn-sm theme-toggle"
+   (click)="theme.alternar()"
+   [attr.aria-label]="theme.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+   [title]="theme.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+ >
+   <span aria-hidden="true">{{ theme.isDark() ? '☀' : '☾' }}</span>
+ </button>
+      <button type="button" class="btn btn-ghost btn-sm hover:bg-gray-200" (click)="logout()">Cerrar sesión</button>
+    </div>
+  </div>
 </header>
-<main>
+<main class="content">
   <router-outlet />
 </main>
